@@ -192,7 +192,7 @@ Our marketing team has provided us with a list of people in Comma Separated Form
 
 ```
 Elon Musk, 44, Tesla/SpaceX
-Steve Jobs, 56, Apple
+Steve Jobs, 56, Apple, recommend changing to a living person
 Martha Stewart, 74, MSL
 ```
 
@@ -204,7 +204,7 @@ class Person
 end
 
 csv_data = "Elon Musk, 44, Tesla
-Steve Jobs, 56, Apple
+Steve Jobs, 56, Apple, see above
 Martha Stewart, 74, MSL
 "
 
