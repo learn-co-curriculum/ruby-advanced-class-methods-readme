@@ -585,7 +585,3 @@ Here our `Person.destroy_all` method uses the [`Array#clear`](http://ruby-doc.or
 * [Video Review- Object Models](https://www.youtube.com/watch?v=vENMFapLonA)
 
 * [Video Review- Object Orientation](https://www.youtube.com/watch?v=Z_IoQCVNWtM)
-
-
-<p class='util--hide'>View <a href='https://learn.co/lessons/ruby-advanced-class-methods-readme'>Advanced Class Methods</a> on Learn.co and start learning to code for free.</p>
-
