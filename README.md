@@ -8,8 +8,7 @@
 
 ## Advanced Class Methods
 
-Consider the method `.all` on the `Song` class––`Song.all`. This method acts as a reader for the `@@all` class variable. This
-method _exposes_ this piece of data to the rest of our application. Class methods provide an interface for the data held within a class. This data, stored in a class variable, would otherwise be inaccessible outside of the class:
+Consider the method `.all` on the `Song` class, `Song.all`. This method acts as a reader for the `@@all` class variable. This method _exposes_ this piece of data to the rest of our application. Class methods provide an interface for the data held within a class. This data, stored in a class variable, would otherwise be inaccessible outside of the class:
 
 ```ruby
 class Song
@@ -97,9 +96,7 @@ avi_flombaum #=> nil
 ```
 
 Every time your application requires you to find a particular person by name, you will
-have to use `#find` or some sort of iteration logic on `Person.all` to find a specific instance of a person that has the name you want.
-`#find` will return a specific instance of a person, not an array. [see the docs here](https://ruby-doc.org/core-2.2.3/Enumerable.html#method-i-find)
-This stinks! Writing `Person.find` over and over will quickly become unsustainable as your application grows.
+have to use `#find`, passing in the appropriate block. This stinks! Imagine how unsustainable it will get to write out `Person.all.find` over and over as your application grows.
 
 ## There's Gotta Be a Better Way!
 
@@ -108,12 +105,13 @@ This stinks! Writing `Person.find` over and over will quickly become unsustainab
 ___
 
 Instead of writing `#find` every time we want to _search_ for an object, we
-can **encapsulate** this logic into a class method, like `Person.find_by_name`
-Instead of writing
+can **encapsulate** this logic into a class method, like `Person.find_by_name`.
+Instead of writing:
 
 ```ruby
 Person.find{|p| p.name == "Grace Hopper"}
 ```
+
 every single time we need to search, we can simply teach
 our `Person` class _how_ to search by defining a class method:
 
@@ -161,15 +159,10 @@ civilization when technology provides an abstraction for us to use instead of th
 implementation. When you want light, you don't need to start a fire, you can just flick a
 light switch. _This is an **abstraction**_. We promise. If creating and using abstractions have gotten
 people this far, we should probably continue embracing that design principle in our code.
-___
 
 #### Cool Tangent but What Can We Abstract Away Here?
 
-Our current implementation of `Person.find_by_name` reads the instance data for the class
-**directly** out of the class variable `@@all`. Would this break if we need to rename the `@@all` variable? What if it makes more sense to call it `@@people`?
-Every method that relies on that literal variable name–– `Person.all`,
-`Person.find_by_name`, etc.–– would break, and we'd have to update all of our methods to read
-from the new variable:
+Our current implementation of `Person.find_by_name` reads the instance data for the class **directly** out of the class variable `@@all`. Would this break if we need to rename the `@@all` variable? What if it makes more sense to call it `@@people`? Every method that relies on that literal variable name &mdash; `Person.all`, `Person.find_by_name`, etc. &mdash; would break, and we'd have to update all of our methods to read from the new variable:
 
 ```ruby
 class Person
@@ -197,10 +190,7 @@ Variable names are a very low-level abstraction. They are like making light by f
 Methods that read out of a variable provide an abstraction for the literal variable name.
 Using a reader method is almost always better and more reliable than using the variable.
 
-We already have a method to read `@@people`, `Person.all`, so why not use that method in
-`Person.find_by_name`?
-Within a class method, how do we call another class method? What is the scope of the class
-method? What is self? **The class itself**. Consider:
+We already have a method to read `@@people`, `Person.all`, so why not use that method in `Person.find_by_name`? Within a class method, how do we call another class method? What is the scope of the class method? What is self? **The class itself**. Consider:
 
 ```ruby
 class Person
@@ -226,14 +216,9 @@ class Person
 end
 ```
 
-(Within `#initialize`, an instance method, `self` will refer to an instance, not the entire class.
-In order to access `Person.all`, we need to go from the instance, `self`, to the class––`self.class`––returning
-`Person`, and then invoke the `Person.all` method).
+So what's happening in our `#initialize` method now? Recall that `#initialize` is an instance method, so `self` will refer to an instance, not the entire class. In order to access `Person.all`, we need to go from the instance, `self`, to its class by using `self.class`. So using `self.class.all << self` is the same as using `@@people << self`, but we have abstracted away the use of the variable.
 
-If the variable `@@people` changes names, we only have to update it in one place, the
-`Person.all` reader.
-All code that relies on that method still works. 1 conceptual change -> 1 line-of-code (LOC) change. Nice.
-
+If the variable `@@people` changes names, we only have to update it in one place, the `Person.all` reader. All code that relies on that method still works. 1 conceptual change -> 1 line-of-code (LOC) change. Nice.
 
 In addition to improving the maintainability of our code, class methods also provide a
 more readable API for the rest of our application. Consider just one more time the
@@ -300,10 +285,7 @@ people
 # ]
 ```
 
-Pretty complex. We don't want to do that throughout our application.
-In an ideal world, every time we got CSV data we'd just want the `Person` class to be responsible for parsing it.
-Could we build something like `Person.new_from_csv`?
-Of course! Let's look at how we might implement a custom constructor.
+Pretty complex. We don't want to do that throughout our application. In an ideal world, every time we got CSV data we'd just want the `Person` class to be responsible for parsing it. Could we build something like `Person.new_from_csv`? Of course! Let's look at how we might implement a custom constructor.
 
 ```ruby
 class Person
@@ -386,11 +368,7 @@ class Person
 end
 ```
 
-Like in any class method, `self` refers to the class itself so we can call `self.new` to
-piggyback, wrap, or extend the functionality of `Person.new`––when I call
-`Person.new_from_csv`, who is receiving the method call? It's the `Person` class itself.
-Therefore, `self` in this context is `Person`. We parse the raw data, create an instance,
-and assign the data to the corresponding instance properties.
+Like in any class method, `self` refers to the class itself so we can call `self.new` to piggyback, wrap, or extend the functionality of `Person.new`. When we call `Person.new_from_csv`, who is receiving the method call? It's the `Person` class itself. Therefore, `self` in this context is `Person`. We parse the raw data, create an instance, and assign the data to the corresponding instance properties.
 
 Why do this? If we need to be able to create people from CSVs, why not just build that
 directly into `#initialize`? Well, the honest answer is because we don't always want to
@@ -495,10 +473,8 @@ Person.print_all
 
 Way nicer.
 
-## Class Operators
-
 Additionally, class methods might provide a global operation on data. Imagine that one of
-the csvs we were provided with has people's names in lowercase letters. We want proper
+the CSVs we were provided with has people's names in lowercase letters. We want proper
 capitalization. We can build a class method `Person.normalize_names`
 
 ```ruby
@@ -522,9 +498,13 @@ class Person
 end
 ```
 
-The logic for actually normalizing a person's name is pretty complex. `person.name.split(" ").collect{|w| w.capitalize}.join(" ")`
+The logic for actually normalizing a person's name is pretty complex: 
 
-What we're doing is splitting a name, like `"ada lovelace"`, into an array at the space, `" "`, returning `["ada", "lovelace"]`. With that array we collect each word into a new array after it has been capitalized, returning `["Ada", "Lovelace"]`. We then join the elements in that array with a `" "` returning the final capitalized name, `"Ada Lovelace"`.
+```ruby
+person.name.split(" ").collect{|w| w.capitalize}.join(" ")
+```
+
+What we're doing is splitting a name, like `"ada lovelace"`, into an array at the space, `" "`, which returns `["ada", "lovelace"]`. With that array we collect each word into a new array after it has been capitalized, returning `["Ada", "Lovelace"]`. We then join the elements in that array with a `" "` returning the final capitalized name, `"Ada Lovelace"`.
 
 Given how complex normalizing a person's name is, we should actually encapsulate that into the `Person` instance.
 
@@ -555,7 +535,7 @@ end
 
 With `#normalize_name`, we've taught a `Person` instance how to properly convert its name into a capitalized version. The class method that acts on the global data of all people is simplified and delegates the actual normalization to the original instances. This is a common pattern for global class operators.
 
-Another example of this type of global data manipulation might be deleting all the people. We would build a `Person.destroy_all` class method that will clear out the `@@all` array.
+A final example of this type of global data manipulation might be deleting all the people. We would build a `Person.destroy_all` class method that will clear out the `@@all` array.
 
 ```ruby
 class Person
