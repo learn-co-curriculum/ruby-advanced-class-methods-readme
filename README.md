@@ -108,8 +108,6 @@ over as your application grows.
 
 ## There's Gotta Be a Better Way!
 
-___
-
 Instead of writing `#find` every time we want to _search_ for an object, we can
 **encapsulate** this logic into a class method, like `Person.find_by_name`.
 Instead of writing:
