@@ -108,8 +108,6 @@ over as your application grows.
 
 ## There's Gotta Be a Better Way!
 
-![Home Video Infomercial GIF](https://media.giphy.com/media/xsATxBQfeKHCg/giphy.gif)
-
 ___
 
 Instead of writing `#find` every time we want to _search_ for an object, we can
