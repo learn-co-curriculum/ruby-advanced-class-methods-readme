@@ -277,7 +277,7 @@ Mark Zuckerberg, 32, Facebook
 Martha Stewart, 74, MSL
 ```
 
-They tell us that they will often need to upload CSVs of people data.  Let's
+They tell us that they will often need to upload CSVs of people data. Let's
 look at how we'd create a person instance from a CSV:
 
 ```ruby
@@ -604,11 +604,3 @@ end
 Here our `Person.destroy_all` method uses the
 [`Array#clear`](http://ruby-doc.org/core/Array.html#method-i-clear) method to
 empty the `@@all` array through the class reader `Person.all`.
-
-## Resources
-
-* [Video Review- Object Orientation: Key Mechanics](https://www.youtube.com/watch?v=-jrEbj4iCQ8)
-
-* [Video Review- Object Models](https://www.youtube.com/watch?v=vENMFapLonA)
-
-* [Video Review- Object Orientation](https://www.youtube.com/watch?v=Z_IoQCVNWtM)
